@@ -1,4 +1,4 @@
-package eu.spice;
+package eu.spice.json2rdf.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -7,6 +7,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.json.JSONException;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class JSON2RDFTransformerTest {
 	@Test
 	public void testEmptyAndNull() {
 
-		assertEquals(jt.transformJSON("{}").size(), 0L);
+		assertEquals(jt.transformJSON("{}").size(), 1L);
 		assertEquals(jt.transformJSON("[]").size(), 1L);
 
 		boolean jsonException = false;
@@ -47,6 +48,7 @@ public class JSON2RDFTransformerTest {
 		{
 			Model m = ModelFactory.createDefaultModel();
 			Resource r = m.createResource();
+			m.add(r, RDF.type, RDFS.Resource);
 			m.add(r, m.createProperty(ontologyPrefix + "a"), m.createTypedLiteral(1));
 			m.add(r, m.createProperty(ontologyPrefix + "string"), m.createTypedLiteral("string"));
 			m.add(r, m.createProperty(ontologyPrefix + "bool"), m.createTypedLiteral(true));
@@ -56,11 +58,12 @@ public class JSON2RDFTransformerTest {
 
 		{
 			JSONTransformer jtN = new JSONTransformer(ontologyPrefix);
-			String reourcePrefix = "https://w3id.org/spice/resource/";
-			jtN.setResourcePrefix(reourcePrefix);
+			String root = "https://w3id.org/spice/resource/root";
+			jtN.setURIRoot(root);
 
 			Model mn = ModelFactory.createDefaultModel();
-			Resource rn = mn.createResource(reourcePrefix + JSONTransformer.ROOT_OBJECT_ID);
+			Resource rn = mn.createResource(root);
+			mn.add(rn, RDF.type, RDFS.Resource);
 			mn.add(rn, mn.createProperty(ontologyPrefix + "a"), mn.createTypedLiteral(1));
 			mn.add(rn, mn.createProperty(ontologyPrefix + "string"), mn.createTypedLiteral("string"));
 			mn.add(rn, mn.createProperty(ontologyPrefix + "bool"), mn.createTypedLiteral(true));
@@ -81,6 +84,7 @@ public class JSON2RDFTransformerTest {
 			Resource o = m.createResource();
 			m.add(r, RDF.li(2), o);
 			m.add(o, m.createProperty(ontologyPrefix + "a"), m.createTypedLiteral("a"));
+			m.add(o, RDF.type, RDFS.Resource);
 			m.add(r, RDF.li(4), m.createTypedLiteral(4));
 			Resource arr = m.createResource();
 			m.add(o, m.createProperty(ontologyPrefix + "arr"), arr);
@@ -93,19 +97,20 @@ public class JSON2RDFTransformerTest {
 
 		{
 			JSONTransformer jtN = new JSONTransformer(ontologyPrefix);
-			String reourcePrefix = "https://w3id.org/spice/resource/";
-			jtN.setResourcePrefix(reourcePrefix);
+			String uriRoot = "https://w3id.org/spice/resource/root";
+			jtN.setURIRoot(uriRoot);
 
 			Model m = ModelFactory.createDefaultModel();
-			Resource r = m.createResource(reourcePrefix + JSONTransformer.ROOT_OBJECT_ID);
+			Resource r = m.createResource(uriRoot);
 			m.add(r, RDF.type, RDF.Seq);
 			m.add(r, RDF.li(0), m.createTypedLiteral(1));
 			m.add(r, RDF.li(1), m.createTypedLiteral("abcd"));
-			Resource o = m.createResource(reourcePrefix + JSONTransformer.ROOT_OBJECT_ID + "/_2");
+			Resource o = m.createResource(uriRoot + "/_2");
 			m.add(r, RDF.li(2), o);
+			m.add(o, RDF.type, RDFS.Resource);
 			m.add(o, m.createProperty(ontologyPrefix + "a"), m.createTypedLiteral("a"));
 			m.add(r, RDF.li(4), m.createTypedLiteral(4));
-			Resource arr = m.createResource(reourcePrefix + JSONTransformer.ROOT_OBJECT_ID + "/_2/arr");
+			Resource arr = m.createResource(uriRoot + "/_2/arr");
 			m.add(o, m.createProperty(ontologyPrefix + "arr"), arr);
 			m.add(arr, RDF.type, RDF.Seq);
 			m.add(arr, RDF.li(0), m.createTypedLiteral(0));

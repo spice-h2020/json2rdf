@@ -10,13 +10,14 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JSONTransformer {
 
-	private String propertyPrefix, resourcePrefix;
+	private String propertyPrefix, uriRoot;
 	private boolean useBlankNodes = true;
 	public static final String ROOT_OBJECT_ID = "root";
 
@@ -42,15 +43,16 @@ public class JSONTransformer {
 	}
 
 	public Model getModel(JSONObject object) {
-		return getModel(object, createResource(resourcePrefix + ROOT_OBJECT_ID));
+		return getModel(object, createResource(uriRoot));
 	}
 
 	public Model getModel(JSONArray arr) {
-		return getModel(arr, createResource(resourcePrefix + ROOT_OBJECT_ID));
+		return getModel(arr, createResource(uriRoot));
 	}
 
 	private Model getModel(JSONObject object, Resource r) {
 		Model m = ModelFactory.createDefaultModel();
+		m.add(r, RDF.type, RDFS.Resource);
 		object.keys().forEachRemaining(k -> {
 			Object o = object.get(k);
 			if (o instanceof String || o instanceof Boolean || o instanceof Integer) {
@@ -110,9 +112,9 @@ public class JSONTransformer {
 		this.propertyPrefix = propertyPrefix;
 	}
 
-	public void setResourcePrefix(String resourcePrefix) {
-		if (resourcePrefix != null) {
-			this.resourcePrefix = resourcePrefix;
+	public void setURIRoot(String uri) {
+		if (uri != null) {
+			this.uriRoot = uri;
 			useBlankNodes = false;
 		}
 	}
