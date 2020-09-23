@@ -1,12 +1,12 @@
 # json2rdf
 
-json2rdf implements a series of straightforward assumptions for serving the content of a JSON objects as RDF triples:
+json2rdf implements a series of straightforward assumptions for serving the content of a JSON objects/arrays as RDF triples:
 
-1. JSON objects maps to RDF resources that, depending on the configuration of json2rdf, can be either URIs or blank nodes.
+1. JSON objects map to RDF resources that, depending on the arguments that you provide to json2rdf, can be either URIs or blank nodes.
 2. Fields of the JSON objects maps to properties.
-3. JSON arrays maps to [RDF Sequence](https://www.w3.org/TR/rdf-schema/#ch_seq).
+3. JSON arrays map to [RDF Sequences](https://www.w3.org/TR/rdf-schema/#ch_seq).
 4. JSON primitive types String, Number and Boolean maps to corresponding XSD types, ``xsd:string``, ``xsd:int`` and ``xsd:boolean``.
-5. By default, json2rdf maps JSON objects/arrays to blank nodes, however you can use ``--uri-root`` argument to map JSON objects/arrays to URIs. In this case the URI that you pass to json2rdf as argument for ``--uri-root`` will be the URI of the root JSON object/array. URIs for the nested JSON objects/arrays will be derivede by concatening the URI of the root and the JSON path of the JSON object/array.
+5. By default, json2rdf maps JSON objects/arrays to blank nodes. However, you can use ``--uri-root`` argument to map JSON objects/arrays to URIs. In this case the URI that you pass to json2rdf as argument for ``--uri-root`` will be the URI of the root JSON object/array. URIs for the nested JSON objects/arrays will be derived by concatenating the URI of the root and the JSON path of the JSON object/array.
 6. json2rdf is meant to extract the content of a JSON file, therefore ``null`` values correspond to no triples (cf. [W3C discussion about this topic](https://lists.w3.org/Archives/Public/public-lod/2013Jun/0007.html)).
 
 ### Preliminaries
