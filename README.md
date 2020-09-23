@@ -41,6 +41,6 @@ A bunch of examples of transformations
 
 ## License
 
-json2rdf is licensed under [Apache 2.0](License).
+json2rdf is licensed under [Apache 2.0](LICENSE).
 
 
