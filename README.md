@@ -1,6 +1,6 @@
 # json2rdf
 
-json2rdf implements a series of straightforward assumptions for serving the content of a JSON objects/arrays as RDF triples:
+json2rdf implements a series of straightforward assumptions for serving the content of JSON objects/arrays as RDF triples:
 
 1. JSON objects map to RDF resources that, depending on the arguments that you provide to json2rdf, can be either URIs or blank nodes.
 2. Fields of the JSON objects maps to properties.
