@@ -11,7 +11,7 @@ import org.apache.jena.vocabulary.RDFS;
 import org.json.JSONException;
 import org.junit.Test;
 
-import eu.spice.json2rdf.transformers.JSONTransformer;
+import com.github.spice.json2rdf.transformers.JSONTransformer;
 
 public class JSON2RDFTransformerTest {
 

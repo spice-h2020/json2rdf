@@ -1,4 +1,4 @@
-package eu.spice.json2rdf.transformers;
+package com.github.spice.json2rdf.transformers;
 
 import java.io.BufferedReader;
 import java.io.File;
