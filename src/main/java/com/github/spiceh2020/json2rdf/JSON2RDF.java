@@ -1,4 +1,4 @@
-package com.github.spice.json2rdf;
+package com.github.spiceh2020.json2rdf;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,7 +12,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.github.spice.json2rdf.transformers.JSONTransformer;
+import com.github.spiceh2020.json2rdf.transformers.JSONTransformer;
 
 public class JSON2RDF {
 

@@ -1,4 +1,4 @@
-package eu.spice.json2rdf.test;
+package com.github.spiceh2020.json2rdf.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,7 +11,7 @@ import org.apache.jena.vocabulary.RDFS;
 import org.json.JSONException;
 import org.junit.Test;
 
-import com.github.spice.json2rdf.transformers.JSONTransformer;
+import com.github.spiceh2020.json2rdf.transformers.JSONTransformer;
 
 public class JSON2RDFTransformerTest {
 
