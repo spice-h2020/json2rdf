@@ -6,7 +6,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.List;
+import java.util.Properties;
 
+import org.apache.jena.ext.com.google.common.collect.Lists;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -17,15 +22,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JSONTransformer {
+import com.github.spiceh2020.sparql.anything.model.Triplifier;
+
+public class JSONTransformer implements Triplifier {
 
 	private String propertyPrefix, uriRoot;
 	private boolean useBlankNodes = true;
-	public static final String ROOT_OBJECT_ID = "root";
+	public final static String PROPERTY_PREFIX_PARAMETER = "propertyPrefix";
+	public final static String URI_ROOT_PARAMETER = "uriRoot";
+	public final static String USE_BLANK_NODES_PARAMETER = "useBlankNodes";
+	private List<String> parameters = Lists.newArrayList(PROPERTY_PREFIX_PARAMETER, URI_ROOT_PARAMETER,
+			USE_BLANK_NODES_PARAMETER);
 
-	public JSONTransformer(String propertyPrefix) {
+	public JSONTransformer() {
 		super();
-		this.propertyPrefix = propertyPrefix;
 	}
 
 	public Model transformJSONFile(File input) throws IOException {
@@ -47,11 +57,17 @@ public class JSONTransformer {
 	}
 
 	public Model transformJSON(String json) {
+		checkParameters();
 		try {
 			return getModel(new JSONObject(json));
 		} catch (JSONException e) {
 			return getModel(new JSONArray(json));
 		}
+	}
+
+	private void checkParameters() {
+		if (propertyPrefix == null)
+			throw new RuntimeException("The property prefix can't be null");
 	}
 
 	public Model getModel(JSONObject object) {
@@ -128,6 +144,33 @@ public class JSONTransformer {
 		if (uri != null) {
 			this.uriRoot = uri;
 			useBlankNodes = false;
+		}
+	}
+
+	@Override
+	public Graph triplify(URL url) throws IOException {
+		Model m = transformJSONFromURL(url);
+		Graph g = DatasetFactory.create(m).asDatasetGraph().getDefaultGraph();
+		return g;
+	}
+
+	@Override
+	public List<String> getParameters() {
+		return parameters;
+	}
+
+	@Override
+	public void setParameters(Properties properties) {
+		if (properties.containsKey(PROPERTY_PREFIX_PARAMETER)) {
+			propertyPrefix = properties.getProperty(PROPERTY_PREFIX_PARAMETER);
+		}
+
+		if (properties.containsKey(URI_ROOT_PARAMETER)) {
+			uriRoot = properties.getProperty(URI_ROOT_PARAMETER);
+		}
+
+		if (properties.containsKey(USE_BLANK_NODES_PARAMETER)) {
+			useBlankNodes = Boolean.parseBoolean(properties.getProperty(USE_BLANK_NODES_PARAMETER));
 		}
 	}
 
