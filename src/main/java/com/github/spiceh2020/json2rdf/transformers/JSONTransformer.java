@@ -6,10 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.List;
 import java.util.Properties;
 
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
@@ -18,6 +16,8 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,14 +25,14 @@ import org.json.JSONObject;
 import com.github.spiceh2020.sparql.anything.model.Triplifier;
 
 public class JSONTransformer implements Triplifier {
+	
+	private static final Logger logger= LogManager.getLogger(JSONTransformer.class);
 
 	private String propertyPrefix, uriRoot;
 	private boolean useBlankNodes = true;
 	public final static String PROPERTY_PREFIX_PARAMETER = "propertyPrefix";
 	public final static String URI_ROOT_PARAMETER = "uriRoot";
 	public final static String USE_BLANK_NODES_PARAMETER = "useBlankNodes";
-	private List<String> parameters = Lists.newArrayList(PROPERTY_PREFIX_PARAMETER, URI_ROOT_PARAMETER,
-			USE_BLANK_NODES_PARAMETER);
 
 	public JSONTransformer() {
 		super();
@@ -49,6 +49,9 @@ public class JSONTransformer implements Triplifier {
 	public Model transformJSONFromURL(URL url) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
 
+		if (propertyPrefix == null) {
+			propertyPrefix = url.toString() + "/";
+		}
 		StringBuilder sb = new StringBuilder();
 		br.lines().forEachOrdered(l -> sb.append(l));
 		br.close();
@@ -155,18 +158,14 @@ public class JSONTransformer implements Triplifier {
 	}
 
 	@Override
-	public List<String> getParameters() {
-		return parameters;
-	}
-
-	@Override
 	public void setParameters(Properties properties) {
 		if (properties.containsKey(PROPERTY_PREFIX_PARAMETER)) {
 			propertyPrefix = properties.getProperty(PROPERTY_PREFIX_PARAMETER);
 		}
 
 		if (properties.containsKey(URI_ROOT_PARAMETER)) {
-			uriRoot = properties.getProperty(URI_ROOT_PARAMETER);
+			this.setURIRoot(properties.getProperty(URI_ROOT_PARAMETER));
+			logger.trace("Set uriRoot "+uriRoot);
 		}
 
 		if (properties.containsKey(USE_BLANK_NODES_PARAMETER)) {
