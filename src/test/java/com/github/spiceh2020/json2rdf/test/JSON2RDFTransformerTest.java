@@ -17,12 +17,10 @@ public class JSON2RDFTransformerTest {
 
 	private String ontologyPrefix = "https://w3id.org/resource/ontology/";
 
-
 	@Test
 	public void testEmptyAndNull() {
-		
-		JSONTransformer jt = new JSONTransformer();
-		jt.setPropertyPrefix(ontologyPrefix);
+
+		JSONTransformer jt = new JSONTransformer(ontologyPrefix);
 
 		assertEquals(jt.transformJSON("{}").size(), 1L);
 		assertEquals(jt.transformJSON("[]").size(), 1L);
@@ -48,10 +46,9 @@ public class JSON2RDFTransformerTest {
 	@Test
 	public void testPrimitive() {
 		String primitive1 = "{'a':1,'string':'string','bool':true,'n':null,'boolf':false}";
-		
+
 		{
-			JSONTransformer jt = new JSONTransformer();
-			jt.setPropertyPrefix(ontologyPrefix);
+			JSONTransformer jt = new JSONTransformer(ontologyPrefix);
 			Model m = ModelFactory.createDefaultModel();
 			Resource r = m.createResource();
 			m.add(r, RDF.type, RDFS.Resource);
@@ -63,8 +60,7 @@ public class JSON2RDFTransformerTest {
 		}
 
 		{
-			JSONTransformer jtN = new JSONTransformer();
-			jtN.setPropertyPrefix(ontologyPrefix);
+			JSONTransformer jtN = new JSONTransformer(ontologyPrefix);
 			String root = "https://w3id.org/spice/resource/root";
 			jtN.setURIRoot(root);
 
@@ -83,8 +79,7 @@ public class JSON2RDFTransformerTest {
 	public void testArray() {
 		String array = "[1,'abcd',{'a':'a','arr':[0,1]},null,4]";
 		{
-			JSONTransformer jt = new JSONTransformer();
-			jt.setPropertyPrefix(ontologyPrefix);
+			JSONTransformer jt = new JSONTransformer(ontologyPrefix);
 			Model m = ModelFactory.createDefaultModel();
 			Resource r = m.createResource();
 			m.add(r, RDF.type, RDF.Seq);
@@ -105,8 +100,7 @@ public class JSON2RDFTransformerTest {
 		}
 
 		{
-			JSONTransformer jtN = new JSONTransformer();
-			jtN.setPropertyPrefix(ontologyPrefix);
+			JSONTransformer jtN = new JSONTransformer(ontologyPrefix);
 			String uriRoot = "https://w3id.org/spice/resource/root";
 			jtN.setURIRoot(uriRoot);
 

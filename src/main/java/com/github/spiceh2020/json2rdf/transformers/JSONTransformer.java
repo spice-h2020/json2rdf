@@ -6,36 +6,25 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Properties;
 
-import org.apache.jena.graph.Graph;
-import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.github.spiceh2020.sparql.anything.model.Triplifier;
-
-public class JSONTransformer implements Triplifier {
-	
-	private static final Logger logger= LogManager.getLogger(JSONTransformer.class);
+public class JSONTransformer {
 
 	private String propertyPrefix, uriRoot;
 	private boolean useBlankNodes = true;
-	public final static String PROPERTY_PREFIX_PARAMETER = "propertyPrefix";
-	public final static String URI_ROOT_PARAMETER = "uriRoot";
-	public final static String USE_BLANK_NODES_PARAMETER = "useBlankNodes";
-
-	public JSONTransformer() {
+	
+	public JSONTransformer(String propertyPrefix) {
 		super();
+		this.propertyPrefix = propertyPrefix;
 	}
 
 	public Model transformJSONFile(File input) throws IOException {
@@ -147,29 +136,6 @@ public class JSONTransformer implements Triplifier {
 		if (uri != null) {
 			this.uriRoot = uri;
 			useBlankNodes = false;
-		}
-	}
-
-	@Override
-	public Graph triplify(URL url) throws IOException {
-		Model m = transformJSONFromURL(url);
-		Graph g = DatasetFactory.create(m).asDatasetGraph().getDefaultGraph();
-		return g;
-	}
-
-	@Override
-	public void setParameters(Properties properties) {
-		if (properties.containsKey(PROPERTY_PREFIX_PARAMETER)) {
-			propertyPrefix = properties.getProperty(PROPERTY_PREFIX_PARAMETER);
-		}
-
-		if (properties.containsKey(URI_ROOT_PARAMETER)) {
-			this.setURIRoot(properties.getProperty(URI_ROOT_PARAMETER));
-			logger.trace("Set uriRoot "+uriRoot);
-		}
-
-		if (properties.containsKey(USE_BLANK_NODES_PARAMETER)) {
-			useBlankNodes = Boolean.parseBoolean(properties.getProperty(USE_BLANK_NODES_PARAMETER));
 		}
 	}
 

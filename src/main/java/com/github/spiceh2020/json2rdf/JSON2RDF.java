@@ -47,7 +47,7 @@ public class JSON2RDF {
 			String syntax = cmd.getOptionValue("s", "TTL");
 			String resourcePrefix = cmd.getOptionValue("r", "https://w3id.org/spice/resource/root");
 
-			JSONTransformer bnt = new JSONTransformer();
+			JSONTransformer bnt = new JSONTransformer(prefix);
 			if (prefix != null) {
 				bnt.setPropertyPrefix(prefix);
 			}
