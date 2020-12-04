@@ -21,7 +21,7 @@ public class JSONTransformer {
 
 	private String propertyPrefix, uriRoot;
 	private boolean useBlankNodes = true;
-	
+
 	public JSONTransformer(String propertyPrefix) {
 		super();
 		this.propertyPrefix = propertyPrefix;
@@ -42,7 +42,10 @@ public class JSONTransformer {
 			propertyPrefix = url.toString() + "/";
 		}
 		StringBuilder sb = new StringBuilder();
-		br.lines().forEachOrdered(l -> sb.append(l));
+		br.lines().forEachOrdered(l -> {
+			sb.append(l);
+			sb.append('\n');
+		});
 		br.close();
 
 		return transformJSON(sb.toString());
@@ -63,56 +66,59 @@ public class JSONTransformer {
 	}
 
 	public Model getModel(JSONObject object) {
-		return getModel(object, createResource(uriRoot));
+		Model m = ModelFactory.createDefaultModel();
+		getModel(object, createResource(uriRoot), m);
+		return m;
 	}
 
 	public Model getModel(JSONArray arr) {
-		return getModel(arr, createResource(uriRoot));
+		Model m = ModelFactory.createDefaultModel();
+		getModel(arr, createResource(uriRoot), m);
+		return m;
 	}
 
-	private Model getModel(JSONObject object, Resource r) {
-		Model m = ModelFactory.createDefaultModel();
+	private void getModel(JSONObject object, Resource r, Model m) {
 		m.add(r, RDF.type, RDFS.Resource);
 		object.keys().forEachRemaining(k -> {
 			Object o = object.get(k);
+			Property p = m.createProperty(propertyPrefix + k);
+			m.add(p, RDFS.label, m.createTypedLiteral(k));
 			if (o instanceof String || o instanceof Boolean || o instanceof Integer) {
-				transformPrimites(m, r, m.createProperty(propertyPrefix + k), o);
+				transformPrimites(m, r, p, o);
 			} else if (o instanceof JSONObject) {
-				transformJSONObject(m, r, m.createProperty(propertyPrefix + k), (JSONObject) o);
+				transformJSONObject(m, r, p, (JSONObject) o);
 			} else if (o instanceof JSONArray) {
-				transformArray(m, r, m.createProperty(propertyPrefix + k), (JSONArray) o);
+				transformArray(m, r, p, (JSONArray) o);
 			}
 		});
-		return m;
 	}
 
-	private Model getModel(JSONArray arr, Resource r) {
-		Model m = ModelFactory.createDefaultModel();
+	private void getModel(JSONArray arr, Resource r, Model m) {
 		m.add(r, RDF.type, RDF.Seq);
 		for (int i = 0; i < arr.length(); i++) {
 			Object o = arr.get(i);
+			Property p = RDF.li(i + 1);
 			if (o instanceof String || o instanceof Boolean || o instanceof Integer) {
-				transformPrimites(m, r, RDF.li(i), o);
+				transformPrimites(m, r, p, o);
 			} else if (o instanceof JSONObject) {
-				transformJSONObject(m, r, RDF.li(i), (JSONObject) o);
+				transformJSONObject(m, r, p, (JSONObject) o);
 			} else if (o instanceof JSONArray) {
-				transformArray(m, r, RDF.li(i), (JSONArray) o);
+				transformArray(m, r, p, (JSONArray) o);
 			}
 		}
 		;
-		return m;
 	}
 
 	private void transformArray(Model m, Resource r, Property p, JSONArray o) {
 		Resource seq = createResource(r.getURI() + "/" + p.getLocalName());
 		m.add(r, p, seq);
-		m.add(getModel(o, seq));
+		getModel(o, seq, m);
 	}
 
 	private void transformJSONObject(Model m, Resource r, Property p, JSONObject o) {
 		Resource rnew = createResource(r.getURI() + "/" + p.getLocalName());
 		m.add(r, p, rnew);
-		m.add(getModel(o, rnew));
+		getModel(o, rnew, m);
 	}
 
 	private void transformPrimites(Model m, Resource r, Property p, Object o) {
