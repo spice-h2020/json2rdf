@@ -12,7 +12,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
 
 import com.jsoniter.JsonIterator;
 import com.jsoniter.ValueType;
@@ -71,11 +70,11 @@ public class JSONTransformer_JSONIter {
 
 	private void transformAny(Any object, Model m, Resource r) {
 		if (object.valueType().equals(ValueType.OBJECT)) {
-			m.add(r, RDF.type, RDFS.Resource);
+//			m.add(r, RDF.type, RDFS.Resource);
 			object.keys().spliterator().forEachRemaining(k -> {
 				Any o = object.get(k);
 				Property p = m.createProperty(propertyPrefix + k);
-				m.add(p, RDFS.label, m.createTypedLiteral(k));
+//				m.add(p, RDFS.label, m.createTypedLiteral(k));
 				if (o.valueType().equals(ValueType.ARRAY) || o.valueType().equals(ValueType.OBJECT)) {
 					Resource rnew = createResource(r.getURI() + "/" + k);
 					m.add(r, p, rnew);
@@ -85,7 +84,7 @@ public class JSONTransformer_JSONIter {
 				}
 			});
 		} else if (object.valueType().equals(ValueType.ARRAY)) {
-			m.add(r, RDF.type, RDF.Seq);
+//			m.add(r, RDF.type, RDF.Seq);
 			for (int i = 0; i < object.size(); i++) {
 				Any o = object.get(i);
 				Property p = RDF.li(i + 1);

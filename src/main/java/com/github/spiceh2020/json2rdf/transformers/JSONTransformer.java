@@ -12,7 +12,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,11 +77,11 @@ public class JSONTransformer {
 	}
 
 	private void getModel(JSONObject object, Resource r, Model m) {
-		m.add(r, RDF.type, RDFS.Resource);
+//		m.add(r, RDF.type, RDFS.Resource);
 		object.keys().forEachRemaining(k -> {
 			Object o = object.get(k);
 			Property p = m.createProperty(propertyPrefix + k);
-			m.add(p, RDFS.label, m.createTypedLiteral(k));
+//			m.add(p, RDFS.label, m.createTypedLiteral(k));
 			if (o instanceof String || o instanceof Boolean || o instanceof Integer) {
 				transformPrimites(m, r, p, o);
 			} else if (o instanceof JSONObject) {
@@ -94,7 +93,7 @@ public class JSONTransformer {
 	}
 
 	private void getModel(JSONArray arr, Resource r, Model m) {
-		m.add(r, RDF.type, RDF.Seq);
+//		m.add(r, RDF.type, RDF.Seq);
 		for (int i = 0; i < arr.length(); i++) {
 			Object o = arr.get(i);
 			Property p = RDF.li(i + 1);
