@@ -45,7 +45,6 @@ public class JSON2RDFTransformerTest {
 		}
 		{
 			JSONTransformer_JSONIter jt = new JSONTransformer_JSONIter(ontologyPrefix);
-			
 
 			assertEquals(jt.transformJSON("{}").size(), 0L);
 			assertEquals(jt.transformJSON("[]").size(), 0L);
@@ -103,15 +102,13 @@ public class JSON2RDFTransformerTest {
 				mn.add(rn, mn.createProperty(ontologyPrefix + "string"), mn.createTypedLiteral("string"));
 				mn.add(rn, mn.createProperty(ontologyPrefix + "bool"), mn.createTypedLiteral(true));
 				mn.add(rn, mn.createProperty(ontologyPrefix + "boolf"), mn.createTypedLiteral(false));
-				
+
 //				mn.add(mn.createProperty(ontologyPrefix + "a"), RDFS.label, mn.createTypedLiteral("a"));
 //				mn.add(mn.createProperty(ontologyPrefix + "string"), RDFS.label, mn.createTypedLiteral("string"));
 //				mn.add(mn.createProperty(ontologyPrefix + "bool"), RDFS.label, mn.createTypedLiteral("bool"));
 //				mn.add(mn.createProperty(ontologyPrefix + "boolf"), RDFS.label, mn.createTypedLiteral("boolf"));
 //				mn.add(mn.createProperty(ontologyPrefix + "n"), RDFS.label, mn.createTypedLiteral("n"));
-				
-				
-				
+
 				assertTrue(mn.isIsomorphicWith(jtN.transformJSON(primitive1)));
 			}
 		}
@@ -127,15 +124,14 @@ public class JSON2RDFTransformerTest {
 				m.add(r, m.createProperty(ontologyPrefix + "string"), m.createTypedLiteral("string"));
 				m.add(r, m.createProperty(ontologyPrefix + "bool"), m.createTypedLiteral(true));
 				m.add(r, m.createProperty(ontologyPrefix + "boolf"), m.createTypedLiteral(false));
-				
+
 //				m.add(r, RDF.type, RDFS.Resource);
 //				m.add(m.createProperty(ontologyPrefix + "a"), RDFS.label, m.createTypedLiteral("a"));
 //				m.add(m.createProperty(ontologyPrefix + "string"), RDFS.label, m.createTypedLiteral("string"));
 //				m.add(m.createProperty(ontologyPrefix + "bool"), RDFS.label, m.createTypedLiteral("bool"));
 //				m.add(m.createProperty(ontologyPrefix + "boolf"), RDFS.label, m.createTypedLiteral("boolf"));
 //				m.add(m.createProperty(ontologyPrefix + "n"), RDFS.label, m.createTypedLiteral("n"));
-				
-				
+
 				assertTrue(m.isIsomorphicWith(jt.transformJSON(primitive1)));
 			}
 
@@ -151,14 +147,13 @@ public class JSON2RDFTransformerTest {
 				mn.add(rn, mn.createProperty(ontologyPrefix + "string"), mn.createTypedLiteral("string"));
 				mn.add(rn, mn.createProperty(ontologyPrefix + "bool"), mn.createTypedLiteral(true));
 				mn.add(rn, mn.createProperty(ontologyPrefix + "boolf"), mn.createTypedLiteral(false));
-				
+
 //				mn.add(mn.createProperty(ontologyPrefix + "a"), RDFS.label, mn.createTypedLiteral("a"));
 //				mn.add(mn.createProperty(ontologyPrefix + "string"), RDFS.label, mn.createTypedLiteral("string"));
 //				mn.add(mn.createProperty(ontologyPrefix + "bool"), RDFS.label, mn.createTypedLiteral("bool"));
 //				mn.add(mn.createProperty(ontologyPrefix + "boolf"), RDFS.label, mn.createTypedLiteral("boolf"));
 //				mn.add(mn.createProperty(ontologyPrefix + "n"), RDFS.label, mn.createTypedLiteral("n"));
-				
-				
+
 				assertTrue(mn.isIsomorphicWith(jtN.transformJSON(primitive1)));
 			}
 		}
@@ -280,6 +275,19 @@ public class JSON2RDFTransformerTest {
 			JSONTransformer_JSONIter jt = new JSONTransformer_JSONIter(ontologyPrefix);
 			jt.transformJSON(test);
 		}
+	}
+
+	@Test
+	public void testWhiteSpace() {
+		String test = "{\"a b\":{\"a c\":\"c\"}}";
+		JSONTransformer jt = new JSONTransformer(ontologyPrefix);
+
+		Model m = ModelFactory.createDefaultModel();
+		Resource r = m.createResource(), r1 = m.createResource();
+		m.add(r, m.createProperty(ontologyPrefix + "a%20b"), r1);
+		m.add(r1, m.createProperty(ontologyPrefix + "a%20c"), m.createTypedLiteral("c"));
+		
+		assertTrue(m.isIsomorphicWith(jt.transformJSON(test)));
 	}
 
 }
